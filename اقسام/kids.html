@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قسم الأطفال والعناية بهم - WOSHWOSHA</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-burgundy: #4a0d21; --accent-gold: #d4af37; --soft-pink-bg: #fdf2f5; --text-dark: #2d2226; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--soft-pink-bg); color: var(--text-dark); }
+        .top-bar { background: linear-gradient(90deg, #380818 0%, #5c112a 50%, #380818 100%); color: var(--accent-gold); font-size: 0.85rem; padding: 8px 0; font-weight: 600; }
+        .main-navbar { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #f3dce3; padding: 12px 0; }
+        .brand-logo { font-family: 'Poppins', sans-serif; font-size: 1.7rem; font-weight: 700; color: var(--primary-burgundy); text-decoration: none; }
+        .cart-icon-wrapper { position: relative; cursor: pointer; }
+        .cart-badge { position: absolute; top: -8px; right: -10px; background-color: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
+        .product-card { background: #ffffff; border: 1px solid #fce3eb; border-radius: 20px; overflow: hidden; height: 100%; display: flex; flex-direction: column; padding: 12px; cursor: pointer; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-3px); }
+        .product-img-wrapper { position: relative; height: 200px; overflow: hidden; background-color: #fff0f4; border-radius: 15px; }
+        .product-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-add-cart { background-color: var(--primary-burgundy); color: #fff; border-radius: 12px; font-weight: 700; border: none; padding: 10px 15px; width: 100%; transition: all 0.3s; }
+        .btn-add-cart:hover { background-color: #380818; color: var(--accent-gold); }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        
+        .modal-header-custom {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 18px 24px 0 24px;
+            border-bottom: none;
+        }
+        .custom-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.4rem;
+            color: #000000 !important;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-right: 0;
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+        .custom-close-btn:hover {
+            transform: scale(1.2);
+            color: #dc3545 !important;
+        }
+
+        .qty-box-enhanced {
+            display: inline-flex;
+            align-items: center;
+            background: #fff0f4;
+            border: 1px solid #f3dce3;
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .qty-btn-enhanced {
+            background: #ffffff;
+            border: 1px solid #f9d5e1;
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            font-weight: 800;
+            font-size: 15px;
+            color: var(--primary-burgundy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .qty-btn-enhanced:hover {
+            background-color: var(--primary-burgundy);
+            color: #ffffff;
+            border-color: var(--primary-burgundy);
+        }
+        .qty-input-enhanced {
+            width: 42px;
+            border: none;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            background: transparent;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar text-center">✨ قسم الأطفال والعناية بهم - WOSHWOSHA ✨</div>
+    <nav class="main-navbar sticky-top">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a href="../index.html" class="btn btn-outline-danger btn-sm rounded-pill fw-bold"><i class="fa-solid fa-arrow-right me-1"></i> الرئيسية</a>
+            <a href="../index.html" class="brand-logo">WOSHWOSHA</a>
+            <div class="cart-icon-wrapper" onclick="showPage('cartPage')">
+                <i class="fa-solid fa-cart-shopping fs-5" style="color: var(--primary-burgundy);"></i>
+                <span class="cart-badge" id="cartCount">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. صفحة عرض المنتجات -->
+    <div id="shopPage" class="page-section active container my-4">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold" style="color: var(--primary-burgundy);">👶 قسم الأطفال والعناية بهم</h3>
+            <p class="text-muted small">اضغطي على المنتج لرؤية التفاصيل والصور والكميات</p>
+        </div>
+        <div class="row g-3" id="productsGrid"></div>
+    </div>
+
+    <!-- 2. صفحة سلة التسوق -->
+    <div id="cartPage" class="page-section container my-4">
+        <h4 class="fw-bold mb-3" style="color: var(--primary-burgundy);">سلة منتجات الأطفال</h4>
+        <div id="cartItemsList"></div>
+        <div id="cartSummaryBox" class="card border-0 shadow-sm p-4 mt-3 rounded-4" style="background-color: #fff8fa; display: none;">
+            <div class="d-flex justify-content-between mb-3 fs-5 fw-bold"><span>الإجمالي:</span><span id="totalCartPrice" class="text-danger">0 ج.م</span></div>
+            <button class="btn btn-success w-100 py-3 fw-bold rounded-4" onclick="showPage('checkoutPage')">إتمام الطلب 🚀</button>
+        </div>
+    </div>
+
+    <!-- 3. صفحة إتمام الطلب الشحن -->
+    <div id="checkoutPage" class="page-section container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card border-0 shadow-sm p-4 rounded-4" style="background-color: #fff8fa;">
+                    <h4 class="fw-bold mb-4 text-center" style="color: var(--primary-burgundy);">تفاصيل الفاتورة والشحن</h4>
+                    <form onsubmit="submitOrder(event)">
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-bold">الاسم الكامل <span class="text-danger">*</span></label>
+                            <input type="text" id="custName" class="form-control rounded-3 py-2" required placeholder="اكتب اسمك ثلاثي هنا">
+                        </div>
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-bold">الهاتف (رقم الواتساب) <span class="text-danger">*</span></label>
+                            <input type="tel" id="custPhone" class="form-control rounded-3 py-2" required placeholder="01xxxxxxxxx">
+                        </div>
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-bold">الدولة / المنطقة <span class="text-danger">*</span></label>
+                            <select id="custCountry" class="form-select rounded-3 py-2"><option value="مصر" selected>مصر</option></select>
+                        </div>
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-bold">المنطقة / المحافظة <span class="text-danger">*</span></label>
+                            <input type="text" id="custGov" class="form-control rounded-3 py-2" required placeholder="اكتب اسم المحافظة أو المدينة (مثال: القاهرة)">
+                        </div>
+                        <div class="mb-4 text-start">
+                            <label class="form-label fw-bold">العنوان بالتفصيل <span class="text-danger">*</span></label>
+                            <textarea id="custAddress" class="form-control rounded-3" rows="2" required placeholder="اسم الشارع، رقم العمارة، الدور، الشقة"></textarea>
+                        </div>
+                        <div class="mb-4 text-start">
+                            <label class="form-label fw-bold mb-3">طريقة الدفع <span class="text-danger">*</span></label>
+                            <div class="form-check mb-2 p-3 border rounded-3 bg-white">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="cod" id="cod" checked>
+                                <label class="form-check-label fw-bold" for="cod">الدفع نقداً عند الاستلام 💵</label>
+                            </div>
+                            <div class="form-check p-3 border rounded-3 bg-white">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="instapay" id="instapay">
+                                <label class="form-check-label fw-bold text-success" for="instapay">تحويل عبر InstaPay 💳</label>
+                                <div class="mt-3 p-3 rounded-3 border bg-light text-center" id="instapayBox">
+                                    <h6 class="fw-bold text-success mb-2"><i class="fa-solid fa-wallet me-1"></i> تعليمات الدفع عبر InstaPay</h6>
+                                    <p class="small text-muted mb-2">حولي المبلغ إلى الرقم الآتي:</p>
+                                    <div class="fw-bold fs-5 text-dark bg-white py-2 rounded border mb-2" dir="ltr">01110095434</div>
+                                    <p class="small text-danger mb-0">⚠️ أرسلي صورة الإيصال عبر واتساب لتأكيد الطلب.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn w-100 py-3 fw-bold rounded-4 text-white shadow-sm" style="background-color: var(--primary-burgundy);">تأكيد وإرسال الطلب عبر الواتساب ✨</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تفاصيل المنتج المنبثقة (Modal) -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header-custom">
+                    <button type="button" class="custom-close-btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body px-4 pb-4 pt-1">
+                    <div id="modalCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                        <div class="carousel-indicators" id="modalCarouselIndicators"></div>
+                        <div class="carousel-inner rounded-4" id="modalCarouselInner" style="height: 200px; background: #fff0f4;"></div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-1" id="modalProductName"></h5>
+                    <div class="text-danger fw-bold fs-5 mb-3" id="modalProductPrice"></div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold text-secondary">العدد:</span>
+                        <div class="qty-box-enhanced">
+                            <button type="button" class="qty-btn-enhanced" onclick="changeModalQty(-1)">-</button>
+                            <input type="text" id="modalQty" class="qty-input-enhanced" value="1" readonly>
+                            <button type="button" class="qty-btn-enhanced" onclick="changeModalQty(1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="accordion mb-3" id="productDetailsAccordion">
+                        <div class="accordion-item border rounded-3 overflow-hidden">
+                            <h2 class="accordion-header" id="headingDetails">
+                                <button class="accordion-button collapsed py-2 px-3 small fw-bold bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDetails">
+                                    تفاصيل منتج الأطفال
+                                </button>
+                            </h2>
+                            <div id="collapseDetails" class="accordion-collapse collapse" data-bs-parent="#productDetailsAccordion">
+                                <div class="accordion-body small text-muted" id="modalProductDescription">
+                                    لا توجد تفاصيل إضافية متاحة حالياً.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-add-cart w-100 py-2" id="modalAddToCartBtn">
+                        <i class="fa-solid fa-cart-plus me-1"></i> إضافة للسلة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalsContainer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        // سحب المنتجات من الـ LocalStorage مع وجود المنتجات الافتراضية لقسم الأطفال والعناية بهم
+        const savedProducts = JSON.parse(localStorage.getItem('woshwosha_products'));
+        const defaultKidsCare = [
+            { 
+                id: 501, 
+                name: "لوشن مرطب ومغذي لبشرة الأطفال", 
+                price: 135, 
+                category: "kids_care",
+                images: [
+                    "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "لوشن لطيف مصمم خصيصاً لترطيب وحماية بشرة الأطفال الحساسة ومنحها ملمساً ناعماً طوال اليوم."
+            },
+            { 
+                id: 502, 
+                name: "شامبو أطفال لطيف لا دموع بعد اليوم", 
+                price: 110, 
+                category: "kids_care",
+                images: [
+                    "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "شامبو بقوام لطيف على شعر وجلد الطفل، لا يسبب التهاب العيون وتركيبة خالية من المواد الضارة."
+            }
+        ];
+
+        const sourceList = savedProducts || (typeof allProducts !== 'undefined' ? allProducts : defaultKidsCare);
+        // تصفية منتجات قسم الأطفال والعناية بهم فقط
+        const productsData = sourceList.filter(p => p.category === "kids_care");
+
+        let currentActiveProduct = null;
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            if (!grid) return;
+
+            if (productsData.length === 0) {
+                grid.innerHTML = `<div class="col-12 text-center text-muted py-4">لا توجد منتجات مضافة في هذا القسم حالياً.</div>`;
+                return;
+            }
+
+            grid.innerHTML = productsData.map(p => `
+                <div class="col-6 col-md-4">
+                    <div class="product-card text-center" onclick="openProductModal(${p.id})">
+                        <div class="product-img-wrapper mb-2">
+                            <img src="${p.images[0]}" alt="${p.name}">
+                        </div>
+                        <h6 class="fw-bold text-dark mb-1">${p.name}</h6>
+                        <div class="text-danger fw-bold mb-2">${p.price} ج.م</div>
+                        <span class="btn btn-outline-danger btn-sm rounded-pill mt-auto">عرض التفاصيل</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openProductModal(id) {
+            const product = productsData.find(p => p.id === id);
+            if (!product) return;
+            currentActiveProduct = product;
+            document.getElementById('modalQty').value = 1;
+
+            document.getElementById('modalProductName').innerText = product.name;
+            document.getElementById('modalProductPrice').innerText = product.price + ' ج.م';
+            document.getElementById('modalProductDescription').innerText = product.description || "لا توجد تفاصيل إضافية متاحة حالياً.";
+
+            const indicatorsContainer = document.getElementById('modalCarouselIndicators');
+            const innerContainer = document.getElementById('modalCarouselInner');
+            
+            indicatorsContainer.innerHTML = '';
+            innerContainer.innerHTML = '';
+
+            product.images.forEach((img, idx) => {
+                indicatorsContainer.innerHTML += `
+                    <button type="button" data-bs-target="#modalCarousel" data-bs-slide-to="${idx}" class="${idx === 0 ? 'active' : ''}" aria-label="Slide ${idx + 1}"></button>
+                `;
+                innerContainer.innerHTML += `
+                    <div class="carousel-item ${idx === 0 ? 'active' : ''} h-100">
+                        <img src="${img}" class="d-block w-100 h-100" style="object-fit: contain; background: #fff;" alt="...">
+                    </div>
+                `;
+            });
+
+            document.getElementById('modalAddToCartBtn').onclick = function() {
+                const qty = parseInt(document.getElementById('modalQty').value) || 1;
+                addToCart(product.id, qty, productsData);
+                const modalEl = document.getElementById('productModal');
+                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                modal.hide();
+            };
+
+            const myModal = new bootstrap.Modal(document.getElementById('productModal'));
+            myModal.show();
+        }
+
+        function changeModalQty(val) {
+            const qtyInput = document.getElementById('modalQty');
+            let currentQty = parseInt(qtyInput.value) || 1;
+            currentQty += val;
+            if (currentQty < 1) currentQty = 1;
+            qtyInput.value = currentQty;
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم بالمنتجات - WOSHWOSHA</title>
+    
+    <!-- حماية صفحة الأدمن بالباسورد الجديد -->
+    <script>
+        let password = prompt("أدخلي كلمة سر لوحة التحكم:");
+        if (password !== "sameh851974") {
+            alert("كلمة المرور غير صحيحة!");
+            window.location.href = "index.html";
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-burgundy: #4a0d21; --accent-gold: #d4af37; --soft-pink-bg: #fdf2f5; --text-dark: #2d2226; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--soft-pink-bg); color: var(--text-dark); }
+        .admin-nav { background: linear-gradient(90deg, #380818 0%, #5c112a 50%, #380818 100%); color: #fff; padding: 14px 0; }
+        .brand-logo { font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--accent-gold); text-decoration: none; }
+        .card-custom { background: #ffffff; border: 1px solid #fce3eb; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .btn-burgundy { background-color: var(--primary-burgundy); color: #fff; font-weight: 700; border-radius: 10px; border: none; transition: all 0.3s; }
+        .btn-burgundy:hover { background-color: #380818; color: var(--accent-gold); }
+        .table-img { width: 55px; height: 55px; object-fit: cover; border-radius: 10px; border: 1px solid #fce3eb; }
+        .badge-cat { background-color: #f8d7da; color: var(--primary-burgundy); font-weight: 700; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; }
+        .form-control, .form-select { border-radius: 10px; border: 1px solid #ebd0d8; padding: 10px 12px; }
+        .form-control:focus, .form-select:focus { border-color: var(--primary-burgundy); box-shadow: 0 0 0 0.2rem rgba(74, 13, 33, 0.15); }
+    </style>
+</head>
+<body>
+
+    <header class="admin-nav sticky-top">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-sliders fs-4 text-warning"></i>
+                <span class="fw-bold fs-5 text-white">لوحة إداره المنتجات</span>
+            </div>
+            <a href="index.html" class="brand-logo">WOSHWOSHA</a>
+            <a href="index.html" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold"><i class="fa-solid fa-store me-1"></i> العودة للمتجر</a>
+        </div>
+    </header>
+
+    <div class="container my-4">
+        <div class="row g-4">
+            
+            <div class="col-lg-4">
+                <div class="card-custom p-4">
+                    <h5 class="fw-bold mb-3" style="color: var(--primary-burgundy);" id="formTitle">
+                        <i class="fa-solid fa-plus-circle me-1"></i> إضافة منتج جديد
+                    </h5>
+                    <form id="productForm" onsubmit="handleFormSubmit(event)">
+                        <input type="hidden" id="editProductId">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">اسم المنتج <span class="text-danger">*</span></label>
+                            <input type="text" id="prodName" class="form-control" placeholder="أدخل اسم المنتج" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">السعر (ج.م) <span class="text-danger">*</span></label>
+                            <input type="number" id="prodPrice" class="form-control" placeholder="مثال: 150" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">القسم الرئيسي <span class="text-danger">*</span></label>
+                            <select id="prodCategory" class="form-select" required>
+                                <option value="" disabled selected>اختر القسم المناسب...</option>
+                                <option value="nails">💅 نيلز</option>
+                                <option value="makeup">💄 مكياج</option>
+                                <option value="perfumes">🌸 برفانات</option>
+                                <option value="hair-brushes">🪮 فرش الشعر</option>
+                                <option value="hair-care">🧴 عناية بالشعر</option>
+                                <option value="body-care">🧴 عناية بالجسم</option>
+                                <option value="skincare">🧴 كريمات وعناية بالبشرة</option>
+                                <option value="kids">👶 قسم الأطفال</option>
+                                <option value="paper">📦 قسم الورقيات</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">رابط الصورة (URL) <span class="text-danger">*</span></label>
+                            <input type="url" id="prodImage" class="form-control" placeholder="https://example.com/image.jpg" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">وصف المنتج</label>
+                            <textarea id="prodDesc" class="form-control" rows="3" placeholder="أكتب وصفاً قصيراً ومفصلاً للمنتج..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-burgundy w-100 py-2 mt-2" id="saveBtn">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> حفظ المنتج
+                        </button>
+                        <button type="button" class="btn btn-light w-100 py-2 mt-2 text-secondary fw-bold" id="cancelEditBtn" onclick="resetForm()" style="display: none;">
+                            إلغاء التعديل
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card-custom p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0" style="color: var(--primary-burgundy);">
+                            <i class="fa-solid fa-boxes-stacked me-1"></i> قائمة المنتجات (<span id="totalProductsCount">0</span>)
+                        </h5>
+                        <button class="btn btn-outline-danger btn-sm rounded-pill fw-bold" onclick="resetToDefaultData()">
+                            <i class="fa-solid fa-rotate-left me-1"></i> استعادة الافتراضي
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>الصورة</th>
+                                    <th>اسم المنتج</th>
+                                    <th>القسم</th>
+                                    <th>السعر</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminProductsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="products.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const categoryNames = {
+            'nails': '💅 نيلز',
+            'makeup': '💄 مكياج',
+            'perfumes': '🌸 برفانات',
+            'hair-brushes': '🪮 فرش الشعر',
+            'hair-care': '🧴 عناية بالشعر',
+            'body-care': '🧴 عناية بالجسم',
+            'skincare': '🧴 كريمات وعناية بالبشرة',
+            'kids': '👶 قسم الأطفال',
+            'paper': '📦 قسم الورقيات'
+        };
+
+        function getStoredProducts() {
+            const saved = localStorage.getItem('woshwosha_products');
+            if (saved) return JSON.parse(saved);
+            return (typeof allProducts !== 'undefined') ? allProducts : [];
+        }
+
+        function saveProductsToStorage(products) {
+            localStorage.setItem('woshwosha_products', JSON.stringify(products));
+            renderProductsTable();
+        }
+
+        function renderProductsTable() {
+            const products = getStoredProducts();
+            const tableBody = document.getElementById('adminProductsTable');
+            document.getElementById('totalProductsCount').innerText = products.length;
+
+            if (products.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-muted py-4">لا توجد منتجات مسجلة حالياً.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = products.map(p => `
+                <tr>
+                    <td><img src="${p.images && p.images[0] ? p.images[0] : 'https://via.placeholder.com/50'}" class="table-img" alt="${p.name}"></td>
+                    <td class="fw-bold">${p.name}</td>
+                    <td><span class="badge-cat">${categoryNames[p.category] || p.category}</span></td>
+                    <td class="fw-bold text-danger">${p.price} ج.م</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1 rounded-3" onclick="editProduct(${p.id})"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-sm btn-outline-danger rounded-3" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editProductId').value;
+            const name = document.getElementById('prodName').value.trim();
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const category = document.getElementById('prodCategory').value;
+            const rawImages = document.getElementById('prodImage').value.trim();
+            const description = document.getElementById('prodDesc').value.trim();
+            const imagesArray = rawImages.split(',').map(url => url.trim()).filter(url => url.length > 0);
+
+            let products = getStoredProducts();
+            if (editId) {
+                products = products.map(p => p.id == editId ? { ...p, name, price, category, images: imagesArray, description } : p);
+            } else {
+                products.push({ id: Date.now(), name, price, category, images: imagesArray, description });
+            }
+            saveProductsToStorage(products);
+            resetForm();
+            alert(editId ? "تم تعديل المنتج بنجاح! ✨" : "تمت إضافة المنتج الجديد بنجاح! 🚀");
+        }
+
+        function editProduct(id) {
+            const products = getStoredProducts();
+            const product = products.find(p => p.id == id);
+            if (!product) return;
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('prodName').value = product.name;
+            document.getElementById('prodPrice').value = product.price;
+            document.getElementById('prodCategory').value = product.category;
+            document.getElementById('prodImage').value = product.images ? product.images.join(', ') : '';
+            document.getElementById('prodDesc').value = product.description || '';
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square me-1"></i> تعديل المنتج`;
+            document.getElementById('saveBtn').innerHTML = `<i class="fa-solid fa-check me-1"></i> حفظ التعديلات`;
+            document.getElementById('cancelEditBtn').style.display = 'block';
+        }
+
+        function deleteProduct(id) {
+            if (confirm("هل أنت متأكدة من حذف هذا المنتج؟")) {
+                let products = getStoredProducts();
+                products = products.filter(p => p.id != id);
+                saveProductsToStorage(products);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('editProductId').value = '';
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-plus-circle me-1"></i> إضافة منتج جديد`;
+            document.getElementById('saveBtn').innerHTML = `<i class="fa-solid fa-floppy-disk me-1"></i> حفظ المنتج`;
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        }
+
+        function resetToDefaultData() {
+            if (confirm("هل تريدين إعادة استعادة المنتجات الافتراضية؟")) {
+                if (typeof allProducts !== 'undefined') {
+                    localStorage.setItem('woshwosha_products', JSON.stringify(allProducts));
+                } else {
+                    localStorage.removeItem('woshwosha_products');
+                }
+                renderProductsTable();
+                alert("تم استعادة البيانات الافتراضية بنجاح!");
+            }
+        }
+
+        renderProductsTable();
+    </script>
+</body>
+</html>
